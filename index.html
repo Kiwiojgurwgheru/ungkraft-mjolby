@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ungkraft Mjölby | Trädgårdsskötsel & Fastighetsservice</title>
+<meta name="description" content="Professionell trädgårdshjälp och snöskottning i Mjölby utförd av en driven, noggrann ungdom. Boka enkelt online!">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,600&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    ink:   '#16241C',
+                    pine:  { DEFAULT:'#1F3D2B', 50:'#F1F5F1', 100:'#DCE8DE', 200:'#B7D2BB', 400:'#4F7A5A', 600:'#2A4A34', 700:'#1F3D2B', 900:'#122318' },
+                    moss:  '#6B8F5A',
+                    sun:   { DEFAULT:'#E8A33D', 600:'#CE8A28', 950:'#3A2306' },
+                    frost: { DEFAULT:'#CFE3E6', 600:'#5C8891', 900:'#233C40' },
+                    paper: '#FFFFFF',
+                    sand:  '#F6F5EF',
+                    line:  '#E4E1D2'
+                },
+                fontFamily: {
+                    display: ['"Fraunces"', 'serif'],
+                    body: ['"Inter"', 'sans-serif'],
+                    mono: ['"IBM Plex Mono"', 'monospace'],
+                }
+            }
+        }
+    }
+</script>
+
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<style>
+    ::-webkit-scrollbar { width: 9px; }
+    ::-webkit-scrollbar-track { background: #F6F5EF; }
+    ::-webkit-scrollbar-thumb { background: #1F3D2B; border-radius: 5px; }
+    ::-webkit-scrollbar-thumb:hover { background: #122318; }
+
+    body { font-family: 'Inter', sans-serif; }
+    .font-display { font-family: 'Fraunces', serif; font-feature-settings: 'ss01'; }
+
+    [x-cloak] { display: none !important; }
+
+    /* Signature element: seasonal divider — grass texture bleeding into a frost line */
+    .season-divider {
+        position: relative;
+        height: 64px;
+        background: linear-gradient(90deg, #1F3D2B 0%, #1F3D2B 48%, #CFE3E6 52%, #CFE3E6 100%);
+        clip-path: polygon(
+            0% 40%, 4% 55%, 8% 35%, 12% 60%, 16% 42%, 20% 58%, 24% 38%, 28% 62%,
+            32% 44%, 36% 56%, 40% 40%, 44% 60%, 48% 46%, 50% 50%,
+            52% 45%, 56% 62%, 60% 38%, 64% 58%, 68% 42%, 72% 60%,
+            76% 40%, 80% 58%, 84% 42%, 88% 60%, 92% 44%, 96% 56%, 100% 46%,
+            100% 100%, 0% 100%
+        );
+    }
+
+    .card-lift { transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease; }
+    .card-lift:hover { transform: translateY(-6px); box-shadow: 0 22px 40px -18px rgba(18,35,24,0.35); }
+
+    .stitch { border-top: 2px dashed #C9C4AE; }
+
+    .price-tag { font-family: 'IBM Plex Mono', monospace; letter-spacing: -0.02em; }
+
+    .grain {
+        background-image: radial-gradient(circle at 1px 1px, rgba(18,35,24,0.06) 1px, transparent 0);
+        background-size: 14px 14px;
+    }
+
+    .eyebrow { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.14em; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .card-lift, .card-lift:hover { transition: none; transform: none; }
+    }
+</style>
+</head>
+<body x-data="globalState()" class="bg-sand text-ink font-body">
+
+<header class="sticky top-0 z-40 w-full border-b border-line bg-sand/90 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between">
+        <a href="#" class="flex items-center gap-3 group">
+            <div class="h-11 w-11 bg-pine rounded-full flex items-center justify-center group-hover:rotate-[15deg] transition-transform duration-500">
+                <svg class="w-6 h-6 text-sand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v11M12 3c-2 0-4 2-4 4M12 3c2 0 4 2 4 4M6 21h12M9 21c0-3 1.5-5 3-6M15 21c0-3-1.5-5-3-6" />
+                </svg>
+            </div>
+            <div class="leading-none">
+                <span class="text-xl font-display font-bold tracking-tight text-pine block">Ungkraft</span>
+                <span class="eyebrow text-[10px] text-moss uppercase">Mjölby kommun</span>
+            </div>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-ink/80">
+            <a href="#tjanster" class="hover:text-pine transition-colors">Tjänster</a>
+            <a href="#priser" class="hover:text-pine transition-colors">Priser</a>
+            <a href="#arbetare" class="hover:text-pine transition-colors">Medarbetare</a>
+            <a href="#om-oss" class="hover:text-pine transition-colors">Arbetstider</a>
+        </nav>
+
+        <div class="hidden md:flex items-center">
+            <a href="#bokning" class="bg-sun hover:bg-sun-600 text-sun-950 px-6 py-3 rounded-full text-sm font-bold transition-all shadow-[0_6px_0_0_#CE8A28] hover:shadow-[0_3px_0_0_#CE8A28] hover:translate-y-[3px]">
+                Boka nu
+            </a>
+        </div>
+
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-lg hover:bg-pine-50 text-pine md:hidden">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+    </div>
+
+    <div x-show="mobileMenuOpen" x-cloak x-transition class="md:hidden border-t border-line bg-sand px-4 py-4 space-y-1">
+        <a href="#tjanster" @click="mobileMenuOpen=false" class="block py-2.5 font-semibold">Tjänster</a>
+        <a href="#priser" @click="mobileMenuOpen=false" class="block py-2.5 font-semibold">Priser</a>
+        <a href="#arbetare" @click="mobileMenuOpen=false" class="block py-2.5 font-semibold">Medarbetare</a>
+        <a href="#om-oss" @click="mobileMenuOpen=false" class="block py-2.5 font-semibold">Arbetstider</a>
+        <a href="#bokning" @click="mobileMenuOpen=false" class="block text-center bg-sun text-sun-950 py-3 rounded-full font-bold mt-3">Boka nu</a>
+    </div>
+</header>
+
+<div x-show="upcomingBookings.length > 0 && !reminderDismissed" x-cloak x-transition class="bg-sun/20 border-b border-sun/40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-sun-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+            </svg>
+            <div class="flex-1 space-y-3">
+                <template x-for="b in upcomingBookings" :key="b.id">
+                    <div class="text-sm text-ink/90 leading-relaxed">
+                        <span class="font-bold block text-ink">Din bokning är sparad</span>
+                        <span x-text="b.service"></span> · <span x-text="formatDateLabel(b.date)"></span>, kl. <span x-text="b.time"></span>
+                        <br>
+                        Arbetare: <strong>Wilex Risarp</strong> · Kontakt: <a href="tel:0762552418" class="underline font-semibold">076-255 24 18</a>
+                    </div>
+                </template>
+            </div>
+            <button @click="reminderDismissed = true" class="text-ink/40 hover:text-ink flex-shrink-0" aria-label="Stäng">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="relative bg-pine text-sand overflow-hidden">
+    <div class="absolute inset-0 grain opacity-20"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative py-16 lg:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+            <div class="lg:col-span-7 space-y-7">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pine-600/70 border border-pine-200/20 text-sm font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-sun animate-pulse"></span>
+                    Sommar som vinter — vi håller din tomt i skick
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-[3.4rem] font-display font-bold tracking-tight leading-[1.05]">
+                    Gräset klipps.<br>
+                    <span class="italic font-medium text-frost">Snön skottas.</span><br>
+                    Du slipper tänka på det.
+                </h1>
+                <p class="text-lg text-pine-100/90 max-w-xl leading-relaxed">
+                    En driven ungdom från Mjölby sköter din trädgård och fastighet året runt — noggrant, prisvärt och med fasta priser du kan lita på.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 pt-2">
+                    <a href="#bokning" class="text-center bg-sun hover:bg-sun-600 text-sun-950 font-bold px-9 py-4 rounded-full shadow-[0_6px_0_0_#CE8A28] hover:shadow-[0_3px_0_0_#CE8A28] hover:translate-y-[3px] transition-all">
+                        Skicka bokningsförfrågan
+                    </a>
+                    <a href="#tjanster" class="text-center border-2 border-sand/25 hover:border-sand/60 text-sand font-semibold px-9 py-4 rounded-full transition-all">
+                        Se våra tjänster
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="relative w-full max-w-sm mx-auto bg-paper text-ink p-7 rounded-3xl shadow-2xl rotate-1">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="eyebrow text-[11px] text-moss uppercase flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Aktuell status
+                        </span>
+                        <span class="px-2.5 py-1 text-[10px] bg-pine-50 text-pine rounded-full font-bold">Mjölby</span>
+                    </div>
+
+                    <h3 class="text-xs text-ink/50 uppercase tracking-wide font-semibold mb-1">Nästa lediga pass</h3>
+                    <p class="text-2xl font-display font-bold text-pine mb-5">Lördag kl. 14:00</p>
+
+                    <div class="bg-sand rounded-2xl p-4 space-y-3 mb-5">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-pine rounded-full"></span>Gräsklippning &amp; trim</span>
+                            <span class="price-tag font-bold text-pine">från 199 kr</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-frost-600 rounded-full"></span>Snöskottning</span>
+                            <span class="price-tag font-bold text-frost-600">från 99 kr</span>
+                        </div>
+                    </div>
+
+                    <a href="#bokning" class="block text-center w-full bg-pine hover:bg-pine-600 text-sand py-3.5 rounded-xl font-bold transition-all">
+                        Skicka en förfrågan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="season-divider"></div>
+</section>
+
+<!-- TJÄNSTER -->
+<section id="tjanster" class="py-24 bg-paper scroll-mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-16">
+            <h2 class="eyebrow text-xs text-moss uppercase mb-3">Flexibelt utbud</h2>
+            <h3 class="text-3xl sm:text-4xl font-display font-bold tracking-tight text-pine">Vad behöver du hjälp med?</h3>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card-lift p-9 bg-pine-50 rounded-[1.75rem] border border-pine-100 space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-pine flex items-center justify-center text-sand">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 21h12M4 14h16m-12 0a3 3 0 100-6 3 3 0 000 6zm8 0a3 3 0 100-6 3 3 0 000 6z" /></svg>
+                </div>
+                <h4 class="text-xl font-display font-bold text-pine">Gräsklippning &amp; trimning</h4>
+                <p class="text-ink/70 leading-relaxed">Vi klipper gräsmattan jämnt och snyggt samt trimmar besvärliga kanter under säsongen.</p>
+            </div>
+            <div class="card-lift p-9 bg-pine-50 rounded-[1.75rem] border border-pine-100 space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-pine flex items-center justify-center text-sand">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                </div>
+                <h4 class="text-xl font-display font-bold text-pine">Ogräsrensning &amp; rabatter</h4>
+                <p class="text-ink/70 leading-relaxed">Noggrann rensning av ogräs i rabatter och på grusgångar för en välvårdad tomt.</p>
+            </div>
+            <div class="card-lift p-9 bg-frost/40 rounded-[1.75rem] border border-frost space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-frost-600 flex items-center justify-center text-sand">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m-9-9h18m-3-6L6 18M6 6l12 12" /></svg>
+                </div>
+                <h4 class="text-xl font-display font-bold text-frost-900">Snöskottning</h4>
+                <p class="text-frost-900/70 leading-relaxed">Vi håller dina gångar och uppfarter fria från snö samt sandar eller saltar vid behov.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MEDARBETARE -->
+<section id="arbetare" class="py-24 bg-sand scroll-mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-xl mx-auto mb-16">
+            <h2 class="eyebrow text-xs text-moss uppercase mb-3">Vilka vi är</h2>
+            <h3 class="text-3xl sm:text-4xl font-display font-bold tracking-tight text-pine mb-3">Våra flitiga medarbetare</h3>
+            <p class="text-ink/70">Drivna och pålitliga lokala ungdomar från Mjölby som gör jobbet med ett leende.</p>
+        </div>
+
+        <div class="flex justify-center">
+            <div class="w-full max-w-sm bg-paper border border-line rounded-[2rem] p-8 text-center card-lift">
+                <div class="relative w-24 h-24 mx-auto bg-pine-50 text-pine rounded-full flex items-center justify-center mb-5">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                    <span class="absolute bottom-0 right-0 bg-sun text-sun-950 text-[10px] font-black px-2 py-0.5 rounded-full border-2 border-paper">PRO</span>
+                </div>
+                <h4 class="text-xl font-display font-bold text-pine">Wilex Risarp</h4>
+                <span class="eyebrow text-[11px] text-moss uppercase block mt-1 mb-4">16 år · Medarbetare</span>
+                <p class="text-ink/70 text-sm leading-relaxed mb-5">
+                    Noggrann, energisk och expert på trädgårdsskötsel och utomhusprojekt i Mjölby med omnejd.
+                </p>
+                <div class="pt-4 stitch flex justify-center gap-6 text-xs font-semibold text-ink/50">
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Verifierad
+                    </span>
+                    <span class="flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-pine" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                        Bakgrundskontrollerad
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- OMDÖMEN -->
+<section class="py-24 bg-paper">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-xl mx-auto mb-16">
+            <h2 class="eyebrow text-xs text-moss uppercase mb-3">Vad kunderna säger</h2>
+            <h3 class="text-3xl sm:text-4xl font-display font-bold tracking-tight text-pine">Omdöme</h3>
+        </div>
+
+        <div class="flex justify-center">
+            <div class="card-lift bg-pine-50 rounded-[1.75rem] p-9 border border-pine-100 flex flex-col max-w-xl">
+                <svg class="w-9 h-9 text-sun mb-4" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 7C6.5 7 4 9.5 4 12.8c0 2.8 2 5.2 4.7 5.2.3 2.3-1.2 3.9-3.2 4.6l.6 1.4c3.6-1 6.4-3.7 6.4-8.1V12C12.5 9.2 11.2 7 9.5 7zm10 0c-3 0-5.5 2.5-5.5 5.8 0 2.8 2 5.2 4.7 5.2.3 2.3-1.2 3.9-3.2 4.6l.6 1.4c3.6-1 6.4-3.7 6.4-8.1V12c0-2.8-1.3-5-3-5z"/></svg>
+                <p class="font-display text-xl italic text-ink/80 leading-relaxed flex-1">Jätte fint, plusspoäng för krattningen av gräset som la sig efter gräsklippningen.</p>
+                <div class="pt-5 mt-5 stitch">
+                    <span class="font-bold text-pine block">Margareta Risarp</span>
+                    <span class="text-xs text-ink/50">Kund, Mjölby</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="priser" class="py-24 bg-paper scroll-mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-2xl mb-16">
+            <h2 class="eyebrow text-xs text-moss uppercase mb-3">Transparenta priser</h2>
+            <h3 class="text-3xl sm:text-4xl font-display font-bold tracking-tight text-pine">Fasta priser, inga dolda avgifter</h3>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-pine-50 rounded-[1.75rem] p-9 border border-pine-100 space-y-6">
+                <h4 class="text-xl font-display font-bold text-pine flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m9-9H3" /></svg>
+                    Trädgårdstjänster
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-4 bg-paper rounded-2xl border border-pine-100">
+                        <div><span class="font-bold block">Liten plan</span><span class="text-sm text-ink/50">Mindre gräs- eller rabattyta</span></div>
+                        <span class="price-tag text-xl font-bold text-pine">199 kr</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-paper rounded-2xl border-2 border-sun">
+                        <div><span class="font-bold block">Mellan plan</span><span class="text-sm text-ink/50">Perfekt för normal villatomt</span></div>
+                        <span class="price-tag text-xl font-bold text-pine">399 kr</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-paper rounded-2xl border border-pine-100">
+                        <div><span class="font-bold block">Stor plan</span><span class="text-sm text-ink/50">Större tomter eller tyngre uppdrag</span></div>
+                        <span class="price-tag text-xl font-bold text-pine">699 kr</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-frost/30 rounded-[1.75rem] p-9 border border-frost space-y-6">
+                <h4 class="text-xl font-display font-bold text-frost-900 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18m9-9H3" /></svg>
+                    Snöskottning
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center p-4 bg-paper rounded-2xl border border-frost">
+                        <div><span class="font-bold block">Liten yta</span><span class="text-sm text-ink/50">Entré eller kort gångväg</span></div>
+                        <span class="price-tag text-xl font-bold text-frost-600">99 kr</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-paper rounded-2xl border-2 border-sun">
+                        <div><span class="font-bold block">Mellan yta</span><span class="text-sm text-ink/50">Normal uppfart och entré</span></div>
+                        <span class="price-tag text-xl font-bold text-frost-600">199 kr</span>
+                    </div>
+                    <div class="flex justify-between items-center p-4 bg-paper rounded-2xl border border-frost">
+                        <div><span class="font-bold block">Stor yta</span><span class="text-sm text-ink/50">Dubbeluppfart och längre gångar</span></div>
+                        <span class="price-tag text-xl font-bold text-frost-600">399 kr</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- OM OSS / ARBETSTIDER -->
+<section id="om-oss" class="py-24 bg-sand scroll-mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+            <div class="space-y-6">
+                <h2 class="eyebrow text-xs text-moss uppercase">Skola &amp; fritid</h2>
+                <h3 class="text-3xl sm:text-4xl font-display font-bold tracking-tight text-pine">Hur vi lägger upp vårt arbete</h3>
+                <p class="text-lg text-ink/70 leading-relaxed">
+                    Eftersom vi går i skolan på vardagarna fokuserar vi främst på att ta emot bokningar under dessa dagar. Helgerna är våra huvudsakliga arbetsdagar då vi kan ta oss an alla typer av uppdrag.
+                </p>
+            </div>
+
+            <div class="bg-pine text-sand rounded-[1.75rem] p-9 space-y-6 shadow-xl">
+                <h4 class="text-2xl font-display font-bold flex items-center gap-3">
+                    <svg class="w-7 h-7 text-sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Våra arbetstider
+                </h4>
+                <div class="space-y-4 pt-5 border-t border-sand/15">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="font-bold block">Vardagar</span>
+                            <span class="text-xs text-pine-100">Endast bokning samt mindre småjobb</span>
+                        </div>
+                        <span class="price-tag bg-sand/10 px-3 py-1 rounded text-sm">17:00–19:00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold">Lördagar</span>
+                        <span class="price-tag bg-sand/10 px-3 py-1 rounded text-sm">14:00–19:00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold">Söndagar</span>
+                        <span class="price-tag bg-sand/10 px-3 py-1 rounded text-sm">12:00–19:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BOKNING -->
+<section id="bokning" class="py-24 bg-paper scroll-mt-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h2 class="eyebrow text-xs text-moss uppercase mb-3">Enkel bokning</h2>
+            <h3 class="text-3xl sm:text-4xl font-display font-bold tracking-tight text-pine">Skicka en bokningsförfrågan</h3>
+        </div>
+
+        <div class="mb-6 p-5 bg-sun/15 border border-sun/40 rounded-3xl flex items-start gap-4">
+            <svg class="w-6 h-6 text-sun-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+            </svg>
+            <div class="text-sm text-ink/80 leading-relaxed">
+                <span class="font-bold block text-base mb-1 text-ink">Endast inom Mjölby kommun</span>
+                Vi utför för närvarande endast uppdrag i fastigheter och trädgårdar som är belägna inom Mjölby kommuns gränser.
+            </div>
+        </div>
+
+        <div class="mb-8 p-5 bg-frost/30 border border-frost rounded-3xl flex items-start gap-4">
+            <svg class="w-6 h-6 text-frost-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008v.008H12v-.008zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="text-sm text-frost-900/90 leading-relaxed">
+                <span class="font-bold block text-base mb-1 text-frost-900">Bra att veta</span>
+                Om arbetet inte hinner bli klart under passet återkommer arbetaren en vardag för att slutföra det. Betalning sker först när arbetet är helt klart. Priserna är fasta enligt prislistan — inga prisdiskussioner.
+            </div>
+        </div>
+
+        <div class="bg-sand rounded-3xl p-8 sm:p-10 border border-line">
+            <div x-show="bookingSuccess" x-cloak x-transition class="text-center py-12 space-y-5">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                </div>
+                <h4 class="text-2xl font-display font-bold text-pine">Tack för din förfrågan!</h4>
+                <p class="text-ink/70 max-w-md mx-auto">
+                    En orderbekräftelse har skickats till vår arbetare <strong>Wilex Risarp</strong>. Han kommer att gå igenom dina uppgifter och kontakta dig personligen inom kort för att stämma av alla detaljer.
+                </p>
+                <button @click="resetBookingForm()" class="bg-pine text-sand px-8 py-3 rounded-full text-sm font-bold hover:bg-pine-600 transition-colors">Gör en ny bokning</button>
+            </div>
+
+            <form x-show="!bookingSuccess" @submit.prevent="submitBooking()" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-pine">Vilken tjänst behöver du hjälp med?</label>
+                    <select x-model="bookingData.service" required class="w-full px-5 py-3.5 bg-paper border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none">
+                        <option value="">Välj en tjänst...</option>
+                        <option value="Trädgård: Liten plan">Trädgård: Liten plan (199 kr)</option>
+                        <option value="Trädgård: Mellan plan">Trädgård: Mellan plan (399 kr)</option>
+                        <option value="Trädgård: Stor plan">Trädgård: Stor plan (699 kr)</option>
+                        <option value="Snöskottning: Liten yta">Snöskottning: Liten yta (99 kr)</option>
+                        <option value="Snöskottning: Mellan yta">Snöskottning: Mellan yta (199 kr)</option>
+                        <option value="Snöskottning: Stor yta">Snöskottning: Stor yta (399 kr)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-bold text-pine">Välj datum</label>
+                        <span class="text-xs text-ink/50">Endast lördagar &amp; söndagar, kommande månad</span>
+                    </div>
+                    <p x-show="calendarLoading" class="text-sm text-ink/50">Hämtar lediga tider…</p>
+                    <div x-show="!calendarLoading" class="grid grid-cols-3 sm:grid-cols-5 gap-2.5">
+                        <template x-for="d in calendarDates" :key="d.date">
+                            <button type="button" @click="selectDate(d)" :disabled="d.full"
+                                :class="d.full
+                                    ? 'bg-red-50 border-red-200 text-red-400 cursor-not-allowed'
+                                    : (bookingData.date === d.date ? 'bg-pine border-pine text-sand' : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:border-pine')"
+                                class="border rounded-2xl py-2.5 px-1 text-center transition-colors">
+                                <span class="block text-[10px] uppercase font-semibold opacity-70" x-text="d.weekday"></span>
+                                <span class="block text-sm font-bold" x-text="d.day"></span>
+                            </button>
+                        </template>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-ink/50 pt-1">
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>Lediga tider</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-300"></span>Fullbokad</span>
+                    </div>
+                </div>
+
+                <div x-show="bookingData.date" x-cloak x-transition class="space-y-3">
+                    <label class="block text-sm font-bold text-pine">Välj tid</label>
+                    <div class="flex flex-wrap gap-2.5">
+                        <template x-for="t in timeSlots" :key="t">
+                            <button type="button" @click="!isSlotBooked(bookingData.date, t) && (bookingData.time = t)"
+                                :disabled="isSlotBooked(bookingData.date, t)"
+                                :class="isSlotBooked(bookingData.date, t)
+                                    ? 'bg-red-50 border-red-200 text-red-400 cursor-not-allowed'
+                                    : (bookingData.time === t ? 'bg-sun border-sun text-sun-950' : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:border-pine')"
+                                class="border rounded-full px-5 py-2.5 text-sm font-bold transition-colors">
+                                <span x-text="t"></span>
+                                <span x-show="isSlotBooked(bookingData.date, t)" class="ml-1 text-[10px]">(bokad)</span>
+                            </button>
+                        </template>
+                    </div>
+                    <div class="flex items-center gap-4 text-xs text-ink/50 pt-1">
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>Ledig</span>
+                        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-red-300"></span>Bokad</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-pine">Ditt namn</label>
+                        <input type="text" x-model="bookingData.name" required placeholder="Förnamn och efternamn" class="w-full px-5 py-3.5 bg-paper border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-pine">Telefonnummer</label>
+                        <input type="tel" x-model="bookingData.phone" required placeholder="t.ex. 070-123 45 67" class="w-full px-5 py-3.5 bg-paper border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-pine">E-postadress</label>
+                    <input type="email" x-model="bookingData.email" required placeholder="namn@epost.se" class="w-full px-5 py-3.5 bg-paper border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-pine">Adress</label>
+                    <input type="text" x-model="bookingData.address" required placeholder="Gata, postnummer och ort" class="w-full px-5 py-3.5 bg-paper border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none">
+                </div>
+
+                <div class="space-y-2 pt-1">
+                    <label class="block text-sm font-bold text-pine">Kundtyp</label>
+                    <div class="flex items-center gap-7 text-sm">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" x-model="bookingData.customerType" value="Privat" class="h-5 w-5 text-pine focus:ring-pine">
+                            <span>Privatperson</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" x-model="bookingData.customerType" value="Företag" class="h-5 w-5 text-pine focus:ring-pine">
+                            <span>Företag (+40 kr)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-pine">Meddelande (valfritt)</label>
+                    <textarea x-model="bookingData.notes" rows="3" class="w-full px-5 py-3.5 bg-paper border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex items-start gap-2.5">
+                    <input type="checkbox" required id="agreeTerms" class="mt-1 h-4 w-4 rounded border-line text-pine focus:ring-pine">
+                    <label for="agreeTerms" class="text-sm text-ink/70">Jag bekräftar att min adress ligger i Mjölby kommun.</label>
+                </div>
+
+                <p x-show="submitError" x-cloak x-text="submitError" class="text-sm text-red-600 text-center font-semibold"></p>
+
+                <p x-show="!bookingData.date || !bookingData.time" x-cloak class="text-xs text-ink/50 text-center">Välj datum och tid ovan för att kunna skicka din förfrågan.</p>
+
+                <button type="submit" :disabled="!bookingData.date || !bookingData.time"
+                    :class="(!bookingData.date || !bookingData.time) ? 'opacity-40 cursor-not-allowed shadow-none translate-y-0' : ''"
+                    class="w-full bg-sun hover:bg-sun-600 text-sun-950 font-bold py-4 rounded-full shadow-[0_6px_0_0_#CE8A28] hover:shadow-[0_3px_0_0_#CE8A28] hover:translate-y-[3px] transition-all">
+                    Skicka bokningsförfrågan
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-pine text-sand py-12 border-t-4 border-sun">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+        <span class="text-xl font-display font-bold tracking-tight block text-sun">Ungkraft Mjölby</span>
+        <p class="text-sm text-pine-100 max-w-md mx-auto">
+            Vi utför pålitlig trädgårdsskötsel och fastighetsservice. Din lokala hjälp i vardagen!
+        </p>
+        <p class="text-xs text-pine-100/60 pt-3">
+            &copy; 2026 Ungkraft Mjölby. Alla rättigheter reserverade. · <a href="/admin.html" class="underline hover:text-sand">Admin</a>
+        </p>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        emailjs.init("ZMugkrhIIennaoFL0");
+    })();
+
+    const API_URL = '/api/bookings';
+
+    function globalState() {
+        return {
+            mobileMenuOpen: false,
+            bookingSuccess: false,
+            reminderDismissed: false,
+            calendarLoading: true,
+            submitError: '',
+            calendarDates: [],
+            bookings: [],
+            myBookings: [], // this browser's own bookings, kept in localStorage just for the reminder banner
+            timeSlots: ['14:00–16:00', '17:00–19:00', '20:00–22:00'],
+
+            bookingData: {
+                service: '', date: '', time: '', name: '', phone: '',
+                email: '', address: '', customerType: 'Privat', notes: ''
+            },
+
+            init() {
+                this.loadMyBookings();
+                this.loadBookings();
+            },
+
+            async loadBookings() {
+                this.calendarLoading = true;
+                try {
+                    const res = await fetch(API_URL);
+                    this.bookings = res.ok ? await res.json() : [];
+                } catch (e) {
+                    console.error('Kunde inte hämta bokade tider:', e);
+                    this.bookings = [];
+                } finally {
+                    this.calendarLoading = false;
+                    this.generateCalendar();
+                }
+            },
+
+            loadMyBookings() {
+                try {
+                    const raw = localStorage.getItem('ungkraft_my_bookings');
+                    this.myBookings = raw ? JSON.parse(raw) : [];
+                } catch (e) {
+                    this.myBookings = [];
+                }
+            },
+
+            rememberMyBooking(booking) {
+                this.myBookings.push(booking);
+                try {
+                    localStorage.setItem('ungkraft_my_bookings', JSON.stringify(this.myBookings));
+                } catch (e) {
+                    console.error('Kunde inte spara påminnelsen lokalt:', e);
+                }
+            },
+
+            isSlotBooked(date, time) {
+                return this.bookings.some(b => b.date === date && b.time === time);
+            },
+
+            isDateFull(date) {
+                return this.timeSlots.every(t => this.isSlotBooked(date, t));
+            },
+
+            get upcomingBookings() {
+                const todayKey = this.dateKey(new Date());
+                return this.myBookings
+                    .filter(b => b.date >= todayKey)
+                    .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+            },
+
+            dateKey(d) {
+                return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            },
+
+            formatDateLabel(dateKey) {
+                const [y, m, d] = dateKey.split('-').map(Number);
+                const monthLabels = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+                const weekdayLabels = ['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
+                const dt = new Date(y, m - 1, d);
+                return weekdayLabels[dt.getDay()] + ' ' + d + ' ' + monthLabels[m - 1];
+            },
+
+            generateCalendar() {
+                const weekdayLabels = ['Sön','Mån','Tis','Ons','Tor','Fre','Lör'];
+                const monthLabels = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+                const today = new Date();
+                const dates = [];
+                // Rolling one-month window: automatically shifts forward as days pass,
+                // so a new weekend date appears as soon as one is a month away.
+                for (let i = 1; i <= 31; i++) {
+                    const d = new Date(today);
+                    d.setDate(today.getDate() + i);
+                    const dow = d.getDay();
+                    if (dow === 0 || dow === 6) {
+                        const key = this.dateKey(d);
+                        dates.push({
+                            date: key,
+                            weekday: weekdayLabels[dow],
+                            day: d.getDate() + ' ' + monthLabels[d.getMonth()],
+                            full: this.isDateFull(key)
+                        });
+                    }
+                }
+                this.calendarDates = dates;
+            },
+
+            selectDate(d) {
+                if (d.full) return;
+                this.bookingData.date = d.date;
+                this.bookingData.time = '';
+            },
+
+            calculatePrice(service, type) {
+                let base = 0;
+                if (service.includes("199")) base = 199;
+                else if (service.includes("399")) base = 399;
+                else if (service.includes("699")) base = 699;
+                else if (service.includes("99")) base = 99;
+                if (type === 'Företag') base += 40;
+                return base;
+            },
+
+            async submitBooking() {
+                this.submitError = '';
+                if (!this.bookingData.date || !this.bookingData.time) return;
+
+                const price = this.calculatePrice(this.bookingData.service, this.bookingData.customerType);
+                const formattedPrice = price + " kr";
+
+                let saved;
+                try {
+                    const res = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            date: this.bookingData.date,
+                            time: this.bookingData.time,
+                            service: this.bookingData.service,
+                            name: this.bookingData.name,
+                            phone: this.bookingData.phone,
+                            email: this.bookingData.email,
+                            address: this.bookingData.address,
+                            customerType: this.bookingData.customerType,
+                            notes: this.bookingData.notes,
+                            price: formattedPrice
+                        })
+                    });
+
+                    if (res.status === 409) {
+                        this.submitError = 'Den tiden blev precis bokad av någon annan — välj en annan tid.';
+                        await this.loadBookings();
+                        return;
+                    }
+                    if (!res.ok) {
+                        this.submitError = 'Något gick fel när bokningen skulle sparas. Försök igen.';
+                        return;
+                    }
+                    saved = await res.json();
+                } catch (e) {
+                    console.error('Kunde inte kontakta bokningsservern:', e);
+                    this.submitError = 'Kunde inte nå bokningsservern. Kontrollera din uppkoppling och försök igen.';
+                    return;
+                }
+
+                this.rememberMyBooking(saved);
+                await this.loadBookings();
+
+                const emailParams = {
+                    order_id: saved.id,
+                    name: this.bookingData.name,
+                    price: formattedPrice,
+                    total_price: formattedPrice,
+                    totalPrice: formattedPrice,
+                    email: this.bookingData.email,
+                    to_email: this.bookingData.email,
+                    customer_email: this.bookingData.email,
+                    service_name: this.bookingData.service,
+                    booking_date: this.bookingData.date + " kl. " + this.bookingData.time,
+                    customer_phone: this.bookingData.phone,
+                    customer_address: this.bookingData.address,
+                    notes: this.bookingData.notes || 'Inga meddelanden',
+                    worker_name: 'Wilex Risarp',
+                    worker_phone: '076-255 24 18'
+                };
+
+                emailjs.send("service_asrldun", "template_zs4kjt7", emailParams)
+                    .then(() => { this.bookingSuccess = true; })
+                    .catch((err) => {
+                        console.error("Fel vid sändning:", err);
+                        this.bookingSuccess = true;
+                    });
+            },
+
+            resetBookingForm() {
+                this.bookingSuccess = false;
+                this.submitError = '';
+                this.bookingData = {
+                    service: '', date: '', time: '', name: '', phone: '',
+                    email: '', address: '', customerType: 'Privat', notes: ''
+                };
+            }
+        };
+    }
+</script>
+</body>
+</html>

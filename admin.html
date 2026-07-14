@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ungkraft Mjölby | Adminvy</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;0,9..144,900&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    ink:   '#16241C',
+                    pine:  { DEFAULT:'#1F3D2B', 50:'#F1F5F1', 100:'#DCE8DE', 600:'#2A4A34', 900:'#122318' },
+                    sun:   { DEFAULT:'#E8A33D', 600:'#CE8A28', 950:'#3A2306' },
+                    paper: '#FFFFFF',
+                    sand:  '#F6F5EF',
+                    line:  '#E4E1D2'
+                },
+                fontFamily: {
+                    display: ['"Fraunces"', 'serif'],
+                }
+            }
+        }
+    }
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+    [x-cloak] { display: none !important; }
+    .eyebrow { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.1em; }
+    .price-tag { font-family: 'IBM Plex Mono', monospace; }
+</style>
+</head>
+<body x-data="adminState()" x-init="init()" class="bg-sand text-ink font-sans min-h-screen">
+
+<!-- PIN-LÅS -->
+<div x-show="!unlocked" x-cloak class="min-h-screen flex items-center justify-center px-4">
+    <form @submit.prevent="tryUnlock()" class="bg-paper border border-line rounded-3xl p-8 max-w-sm w-full space-y-5 shadow-sm">
+        <h1 class="text-2xl font-display font-bold text-pine">Adminvy</h1>
+        <p class="text-sm text-ink/60">Ange din kod för att se bokningarna.</p>
+        <input type="password" x-model="pinInput" placeholder="Kod" autofocus
+            class="w-full px-5 py-3.5 bg-sand border border-line rounded-2xl focus:ring-2 focus:ring-pine focus:outline-none">
+        <p x-show="pinError" x-cloak class="text-sm text-red-600 font-semibold">Fel kod, försök igen.</p>
+        <button type="submit" class="w-full bg-pine hover:bg-pine-600 text-sand font-bold py-3.5 rounded-full transition-colors">Logga in</button>
+    </form>
+</div>
+
+<!-- ADMINVY -->
+<div x-show="unlocked" x-cloak class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-10">
+        <div>
+            <h2 class="eyebrow text-xs text-pine/60 uppercase mb-2">Ungkraft Mjölby</h2>
+            <h1 class="text-3xl font-display font-bold text-pine">Alla bokningar</h1>
+        </div>
+        <div class="flex gap-3">
+            <button @click="loadBookings()" class="bg-paper border border-line hover:border-pine px-5 py-2.5 rounded-full text-sm font-semibold transition-colors">Uppdatera</button>
+            <button @click="unlocked = false; pinInput = ''" class="text-sm text-ink/50 hover:text-ink px-3">Logga ut</button>
+        </div>
+    </div>
+
+    <p x-show="loading" class="text-ink/50">Hämtar bokningar…</p>
+    <p x-show="!loading && bookings.length === 0" class="text-ink/50">Inga bokningar ännu.</p>
+
+    <div x-show="!loading && bookings.length > 0" class="space-y-4">
+        <template x-for="b in sortedBookings" :key="b.id">
+            <div class="bg-paper border rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                 :class="isPast(b.date) ? 'border-line opacity-50' : 'border-pine-100'">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-display text-lg font-bold text-pine" x-text="formatDateLabel(b.date)"></span>
+                        <span class="price-tag text-sm bg-pine-50 text-pine px-2.5 py-0.5 rounded-full" x-text="b.time"></span>
+                        <span x-show="isPast(b.date)" class="text-xs bg-line px-2 py-0.5 rounded-full text-ink/50">Passerat</span>
+                    </div>
+                    <p class="font-semibold" x-text="b.service"></p>
+                    <p class="text-sm text-ink/60">
+                        <span x-text="b.name"></span> ·
+                        <a :href="'tel:' + b.phone" class="underline" x-text="b.phone"></a>
+                        <span x-show="b.email"> · <span x-text="b.email"></span></span>
+                    </p>
+                    <p class="text-sm text-ink/60" x-show="b.address" x-text="b.address"></p>
+                    <p class="text-sm text-ink/50 italic" x-show="b.notes" x-text="'Meddelande: ' + b.notes"></p>
+                    <p class="text-xs text-ink/40" x-show="b.price">
+                        <span x-text="b.customerType"></span> · <span x-text="b.price"></span>
+                    </p>
+                </div>
+                <button @click="cancelBooking(b)" class="flex-shrink-0 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 px-5 py-2.5 rounded-full text-sm font-bold transition-colors">
+                    Avboka
+                </button>
+            </div>
+        </template>
+    </div>
+</div>
+
+<script>
+    const API_URL = '/api/bookings';
+    // Enkel PIN — byt gärna till något du väljer själv.
+    const ADMIN_PIN = '1616';
+
+    function adminState() {
+        return {
+            unlocked: false,
+            pinInput: '',
+            pinError: false,
+            loading: true,
+            bookings: [],
+
+            init() {
+                if (sessionStorage.getItem('ungkraft_admin_ok') === 'yes') {
+                    this.unlocked = true;
+                    this.loadBookings();
+                }
+            },
+
+            tryUnlock() {
+                if (this.pinInput === ADMIN_PIN) {
+                    this.unlocked = true;
+                    this.pinError = false;
+                    sessionStorage.setItem('ungkraft_admin_ok', 'yes');
+                    this.loadBookings();
+                } else {
+                    this.pinError = true;
+                }
+            },
+
+            async loadBookings() {
+                this.loading = true;
+                try {
+                    const res = await fetch(API_URL);
+                    this.bookings = res.ok ? await res.json() : [];
+                } catch (e) {
+                    console.error('Kunde inte hämta bokningar:', e);
+                    this.bookings = [];
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            get sortedBookings() {
+                return [...this.bookings].sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+            },
+
+            isPast(dateKey) {
+                const todayKey = this.dateKey(new Date());
+                return dateKey < todayKey;
+            },
+
+            dateKey(d) {
+                return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            },
+
+            formatDateLabel(dateKey) {
+                const [y, m, d] = dateKey.split('-').map(Number);
+                const monthLabels = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+                const weekdayLabels = ['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
+                const dt = new Date(y, m - 1, d);
+                return weekdayLabels[dt.getDay()] + ' ' + d + ' ' + monthLabels[m - 1];
+            },
+
+            async cancelBooking(b) {
+                if (!confirm('Avboka ' + b.name + ' — ' + this.formatDateLabel(b.date) + ' kl. ' + b.time + '?')) return;
+                try {
+                    const res = await fetch(API_URL + '?id=' + encodeURIComponent(b.id), { method: 'DELETE' });
+                    if (!res.ok) {
+                        alert('Kunde inte avboka. Försök igen.');
+                        return;
+                    }
+                    this.bookings = this.bookings.filter(x => x.id !== b.id);
+                } catch (e) {
+                    console.error('Kunde inte avboka:', e);
+                    alert('Kunde inte nå servern. Försök igen.');
+                }
+            }
+        };
+    }
+</script>
+</body>
+</html>
